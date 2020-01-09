@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.qoq.repostity.HomeworkRepostity">
+    <resultMap id="htot" type="com.ssm.qoq.entity.Homework">
+        <id column="homework_id" property="homeworkId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="homework_title" property="homeworkTitle"/>
+        <result column="homework_type" property="homeworkType"/>
+        <result column="homework_time" property="homeworkTime"/>
+        <result column="homework_status" property="homeworkStatus"/>
+        <collection property="list" ofType="com.ssm.qoq.entity.Title">
+            <id column="title_id" property="titleId"/>
+            <result column="title_name" property="titleName"/>
+            <result column="title_answer" property="titleAnswer"/>
+            <result column="title_type" property="titleType"/>
+            <result column="title_a" property="titleA"/>
+            <result column="title_b" property="titleB"/>
+            <result column="title_c" property="titleC"/>
+            <result column="title_d" property="titleD"/>
+        </collection>
+    </resultMap>
+    <insert id="addhomework" useGeneratedKeys="true" keyProperty="homeworkId">
+        INSERT INTO `data`.homework VALUES(0,#{homeworkTitle},#{homeworkType},#{homeworkTime},#{homeworkStatus},#{courseId});
+    </insert>
+    <insert id="addhomeworktitle">
+        INSERT INTO `data`.homework_title VALUES
+        <foreach collection="titlelist" separator="," item="title">
+            (#{homewordId},#{title.titleId})
+        </foreach>
+    </insert>
+    <select id="allhomeword" resultType="homework">
+        SELECT * FROM `data`.homework WHERE homework_type=#{homeworkType} AND course_id=#{courseId}
+    </select>
+    <update id="updatestatus" flushCache="true">
+        UPDATE `data`.homework SET homework_status=#{homeworkStatus} WHERE homework_id=#{homeworkId};
+    </update>
+    <select id="homeworkdetail" resultMap="htot">
+        SELECT a.*,c.* FROM (homework a JOIN homework_title  b ON a.homework_id=b.homework_id)  JOIN title c on b.title_id=c.title_id WHERE a.homework_id=#{homeworkId};
+    </select>
+    <select id="count" resultType="int">
+        SELECT COUNT(*) count FROM homework_title  WHERE homework_id=#{param1} GROUP BY homework_id;
+    </select>
+</mapper>

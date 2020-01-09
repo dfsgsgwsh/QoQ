@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.qoq.repostity.TermRepostity">
+    <select id="allterm" resultType="term">
+        SELECT * FROM `data`.term
+    </select>
+    <insert id="addterm" parameterType="term">
+        INSERT INTO `data`.term VALUES(0,#{termYear},#{termNo})
+    </insert>
+</mapper>

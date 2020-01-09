@@ -1,0 +1,18 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://39.108.209.99:3306/data?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&allowMutiQueries=true
+    username: root
+    password: qy914411626
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 39.108.209.99
+    port: 6379
+    password: qy914411626
+    database: 0
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: com.ssm.qoq.entity
+  configuration:
+    map-underscore-to-camel-case: true

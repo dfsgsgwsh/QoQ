@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.qoq.repostity.CourseRepostity">
+    <resultMap id="ctos" type="com.ssm.qoq.entity.Course">
+        <id column="course_id" property="courseId"/>
+        <result column="term_id" property="termId"/>
+        <result column="course_name" property="courseName"/>
+        <result column="course_detail" property="courseDetail"/>
+        <result column="course_intro" property="courseIntro"/>
+        <result column="course_status" property="courseStatus"/>
+        <collection property="list" ofType="com.ssm.qoq.entity.Student">
+            <id column="student_id" property="studentId"/>
+            <result column="student_name" property="studentName"/>
+        </collection>
+    </resultMap>
+    <resultMap id="stos" type="com.ssm.qoq.entity.Student">
+        <id column="student_id" property="studentId"/>
+        <result column="student_name" property="studentName"/>
+        <result column="student_status" property="studentStatus"/>
+        <association property="sign" javaType="com.ssm.qoq.entity.Sign">
+            <id column="sign_id" property="signId"/>
+            <result column="sign_title" property="signTitle"/>
+            <result column="course_id" property="courseId"/>
+            <result column="late_time" property="lateTime"/>
+            <result column="truancy_time" property="truancyTime"/>
+            <result column="create_time" property="createTime"/>
+        </association>
+    </resultMap>
+    <select id="termallcourse" parameterType="int" resultType="course">
+        SELECT * FROM `data`.course WHERE term_id=#{param1}
+    </select>
+    <insert id="addcourse" parameterType="course">
+        INSERT INTO `data`.course VALUES('0',#{courseName},#{courseIntro},#{courseDetail},#{termId})
+    </insert>
+    <select id="courseallstudent" parameterType="int" resultMap="ctos">
+        SELECT a.*,c.* FROM (`data`.course a LEFT JOIN `data`.coures_student b ON a.course_id=b.course_id )  LEFT JOIN `data`.student c on b.student_id=c.student_id WHERE a.course_id =#{param1}
+    </select>
+    <select id="count" resultType="int" parameterType="int">
+        SELECT COUNT(*) from `data`.coures_student  WHERE course_id=#{param1} GROUP BY course_id
+    </select>
+    <insert id="addsign" parameterType="sign">
+        INSERT INTO `data`.sign VALUES('0',#{courseId},#{signTitle},#{truancyTime},#{lateTime},#{createTime})
+    </insert>
+    <select id="selectsign" parameterType="int" resultType="sign">
+        SELECT * FROM `data`.sign WHERE course_id=#{param1} ORDER BY late_time desc LIMIT 1;
+    </select>
+    <select id="allsign" parameterType="int" resultType="sign">
+        SELECT * FROM `data`.sign WHERE course_id=#{param1} ORDER BY sign_id DESC
+    </select>
+    <select id="signdetail" resultMap="stos">
+       SELECT a.student_id,a.student_name,IFNULL(a.student_status,'旷课') student_status,b.sign_id,b.course_id,b.create_time,b.sign_title,b.truancy_time,b.late_time FROM (SELECT d.*,e.sign_id,e.student_status FROM (SELECT c.* FROM `data`.coures_student a JOIN `data`.student c ON a.student_id=c.student_id WHERE course_id=#{param1} ) d LEFT JOIN (SELECT * FROM sign_student WHERE sign_id=#{param2}) e on d.student_id=e.student_id) a LEFT JOIN `data`.sign b ON a.sign_id=b.sign_id
+    </select>
+    <select id="onesign" resultType="sign">
+      SELECT * FROM sign WHERE sign_id=#{param1}
+    </select>
+</mapper>
+
